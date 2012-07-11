@@ -8,24 +8,44 @@ import tempfile
 from optparse import OptionParser, OptionValueError
 from lxml import etree
 
-def get_vm_name(path, args):
-    if path:
-        file = open(path, 'r')
+#def get_vm_name(path, args):
+#    if path:
+#        file = open(path, 'r')
+#        xml = etree.parse(file, parser=etree.XMLParser())
+#        return xml.xpath("/domain/name")[0].text
+#    else:
+#        return args[0]
+def get_vm_name(arg):
+    try:
+        file = open(arg, 'r')
+        print "** file"
         xml = etree.parse(file, parser=etree.XMLParser())
         return xml.xpath("/domain/name")[0].text
-    else:
+    except IOError:
+        print "** vm"
         return args[0]
 
-def get_dumpxml(path, vm):
-    if path:
-        file = open(path, 'r')
-    else:
+#def get_dumpxml(path, vm):
+#    if path:
+#        file = open(path, 'r')
+#    else:
+#        virsh_dumpxml = "virsh dumpxml %s" % vm
+#        file = os.popen(virsh_dumpxml)
+#    return file
+def get_dumpxml(vm):
+    try:
+        file = open(vm, 'r')
+        print "* file"
+    except IOError:
+        print "* vm"
         virsh_dumpxml = "virsh dumpxml %s" % vm
         file = os.popen(virsh_dumpxml)
     return file
 
-def get_vm_disks(path, vm):
-    file = get_dumpxml(path, vm)
+#def get_vm_disks(path, vm):
+#    file = get_dumpxml(path, vm)
+def get_vm_disks(vm):
+    file = get_dumpxml(vm)
     xml = etree.parse(file, parser=etree.XMLParser())
     disks_elem = xml.xpath("/domain/devices/disk[@device='disk']")
     disks = []
@@ -104,7 +124,7 @@ if __name__ == '__main__':
     parser.add_option("-r", "--redefine", action="store_true", dest="redefine_flag")
     parser.add_option("-w", "--wwn", action="store_true", dest="wwn_flag")
     parser.add_option("-m", "--mpath", action="store_true", dest="mpath_flag")
-    parser.add_option("-i", "--inputxml", action="store", dest="inputxml")
+#    parser.add_option("-i", "--inputxml", action="store", dest="inputxml")
     (options, args) = parser.parse_args()
 
     if not options.mpath_flag and not options.wwn_flag:
@@ -112,14 +132,31 @@ if __name__ == '__main__':
         print usage
         sys.exit(1)
 
-    vm = get_vm_name(options.inputxml, args)
-    disks = get_vm_disks(options.inputxml, vm)
+    arg = args[0]
+#    vm = get_vm_name(options.inputxml, args)
+    vm = get_vm_name(arg)
+#    disks = get_vm_disks(options.inputxml, vm)
+    disks = get_vm_disks(arg)
     dev2mpath = build_dev2mpath()
     (wwn2majmin, majmin2wwn) = build_wwn2majmin()
     update_disks(disks)
 
+    if options.dumpxml_flag:
+        file = get_dumpxml(arg)
+        for line in file:
+            for disk in disks:
+                if options.mpath_flag:
+                    r = re.compile(disk['wwn'])
+                    line = r.sub("dm-name-%s" % disk['mpath'], line)
+                elif options.wwn_flag:
+                    r = re.compile("dm-name-%s" % disk['mpath'])
+                    line = r.sub(disk['wwn'], line)
+            print line,
+        sys.exit(0)
+
     if options.redefine_flag:
-        infile = get_dumpxml(options.inputxml, vm)
+#        infile = get_dumpxml(options.inputxml, vm)
+        infile = get_dumpxml(arg)
         (fd, fname) = tempfile.mkstemp(prefix="vmcontrol_replace_disks_", suffix=".xml")
         print "*** create: %s" % fname
         outfile = os.fdopen(fd, "w")
@@ -138,19 +175,6 @@ if __name__ == '__main__':
         os.system(virsh_define)
         print "*** remove: %s" % fname
         os.remove(fname)
-        sys.exit(0)
-
-    if options.dumpxml_flag:
-        file = get_dumpxml(options.inputxml, vm)
-        for line in file:
-            for disk in disks:
-                if options.mpath_flag:
-                    r = re.compile(disk['wwn'])
-                    line = r.sub("dm-name-%s" % disk['mpath'], line)
-                elif options.wwn_flag:
-                    r = re.compile("dm-name-%s" % disk['mpath'])
-                    line = r.sub(disk['wwn'], line)
-            print line,
         sys.exit(0)
 
     for disk in disks:
