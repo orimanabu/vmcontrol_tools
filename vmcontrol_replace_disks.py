@@ -107,6 +107,17 @@ def update_disks(disks):
             disk['wwn'] = wwn
             disk['mpath'] = mpath
 
+def check_disks(disks, options):
+    if options.mpath_flag:
+        regexp = re.compile('.*mpath.*')
+    elif options.wwn_flag:
+        regexp = re.compile('.*wwn-.*')
+    for disk in disks:
+        m = regexp.match(disk['source'])
+        if m:
+            print "exit. check whether your option (--mpath or --wwn) is correct."
+            sys.exit(1)
+
 if __name__ == '__main__':
     usage = "Usage: %s [--redefine | --dumpxml] %s" % (sys.argv[0], "vm")
 
@@ -128,6 +139,7 @@ if __name__ == '__main__':
     dev2mpath = build_dev2mpath()
     (wwn2majmin, majmin2wwn) = build_wwn2majmin()
     update_disks(disks)
+    check_disks(disks, options)
 
     if options.dumpxml_flag:
         xmlstr = get_dumpxml(arg)
