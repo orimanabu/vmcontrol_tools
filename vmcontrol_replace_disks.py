@@ -66,10 +66,35 @@ def build_dev2mpath():
 
 def build_wwn2majmin():
     wwn2majmin = {}
-    wwn_list = "ls -l /dev/disk/by-id/wwn-*"
-    for wwn_path in wwn_list:
-            wwn_file = os.path.basename(wwn_path)
-            realpath = os.path.realpath
+    majmin2wwn = {}
+    wwn_list = "ls /dev/disk/by-id/wwn-*"
+    for wwn_path in os.popen(wwn_list):
+        wwn_path = wwn_path.strip()
+        wwn_file = os.path.basename(wwn_path)
+        physdev = os.path.realpath(wwn_path)
+        dev = os.stat(physdev).st_rdev
+        wwn2majmin[wwn_file] = (os.major(dev), os.minor(dev))
+        majmin2wwn[(os.major(dev), os.minor(dev))] = wwn_file
+    return (wwn2majmin, majmin2wwn)
+
+def update_disks(disks):
+    for disk in disks:
+        if options.mpath_flag:
+            disk['wwn'] = disk['source']
+            disk['mpath'] = dev2mpath[disk['majmin']]
+        if options.wwn_flag:
+            physdev = os.path.realpath("/dev/block/%s:%s" % disk['majmin'])
+            regexp = re.compile('^dm-name-')
+            mpath = regexp.sub('', disk['source'])
+            devs = []
+            wwn = None
+            for d,m in dev2mpath.items():
+                if mpath == m:
+                    if majmin2wwn.has_key(d):
+                        wwn = majmin2wwn[d]
+                        break
+            disk['wwn'] = wwn
+            disk['mpath'] = mpath
 
 if __name__ == '__main__':
     usage = "Usage: %s [--sed | --dumpxml] %s" % (sys.argv[0], "vm")
@@ -83,61 +108,51 @@ if __name__ == '__main__':
     parser.add_option("-i", "--inputxml", action="store", dest="inputxml")
     (options, args) = parser.parse_args()
 
+    if not options.mpath_flag and not options.wwn_flag:
+        print "needs --mpath or --wwn"
+        print usage
+        sys.exit(1)
+
     vm = get_vm_name(options.inputxml, args)
     disks = get_vm_disks(options.inputxml, vm)
     dev2mpath = build_dev2mpath()
-    wwn2majmin = build_wwn2majmin()
-
-    if options.sed_flag:
-        print "sed", 
-        for disk in disks:
-            print "-e 's|%s|dm-name-%s|'" % (disk['source'], dev2mpath[disk['majmin']]),
-        print
-        sys.exit(0)
+    (wwn2majmin, majmin2wwn) = build_wwn2majmin()
+    update_disks(disks)
 
     if options.redefine_flag:
         infile = get_dumpxml(options.inputxml, vm)
         (fd, fname) = tempfile.mkstemp(prefix="vmcontrol_replace_disks_", suffix=".xml")
         print "*** create: %s" % fname
         outfile = os.fdopen(fd, "w")
-        if options.mpath_flag:
-            for line in infile:
-                for disk in disks:
-                    r = re.compile(disk['source'])
-                    line = r.sub("dm-name-%s" % dev2mpath[disk['majmin']], line)
-                outfile.write(line)
-            outfile.close()
-            virsh_define = "virsh define %s" % fname
-            print "*** command:", virsh_define
-#            os.system(virsh_define)
-            print "*** remove: %s" % fname
-#            os.remove(fname)
-            sys.exit(0)
+        for line in infile:
+            for disk in disks:
+                if options.mpath_flag:
+                    r = re.compile(disk['wwn'])
+                    line = r.sub("dm-name-%s" % disk['mpath'], line)
+                elif options.wwn_flag:
+                    r = re.compile("dm-name-%s" % disk['mpath'])
+                    line = r.sub(disk['wwn'], line)
+            outfile.write(line)
+        outfile.close()
+        virsh_define = "virsh define %s" % fname
+        print "*** command:", virsh_define
+        os.system(virsh_define)
+        print "*** remove: %s" % fname
+        os.remove(fname)
+        sys.exit(0)
 
     if options.dumpxml_flag:
         file = get_dumpxml(options.inputxml, vm)
-        if options.mpath_flag:
-            for line in file:
-                for disk in disks:
-                    r = re.compile(disk['source'])
-                    line = r.sub("dm-name-%s" % dev2mpath[disk['majmin']], line)
-                print line,
-            sys.exit(0)
-        if options.wwn_flag:
+        for line in file:
             for disk in disks:
-                print "%s\t%d:%d\t" % (disk['source'], disk['majmin'][0], disk['majmin'][1]),
-                physdev = os.path.realpath("/dev/block/%s:%s" % disk['majmin'])
-                print physdev
-                regexp = re.compile('^dm-name-')
-                mpath = regexp.sub('', disk['source'])
-                print mpath,
-                devs = []
-                for d,m in dev2mpath.items():
-                    if mpath == m:
-                        devs.append(d)
-                print devs
-            
+                if options.mpath_flag:
+                    r = re.compile(disk['wwn'])
+                    line = r.sub("dm-name-%s" % disk['mpath'], line)
+                elif options.wwn_flag:
+                    r = re.compile("dm-name-%s" % disk['mpath'])
+                    line = r.sub(disk['wwn'], line)
+            print line,
         sys.exit(0)
 
     for disk in disks:
-        print "%s\t%s" % (disk['source'], dev2mpath[disk['majmin']])
+        print "%s\t%s" % (disk['wwn'], disk['mpath'])
