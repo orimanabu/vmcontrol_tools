@@ -1,0 +1,360 @@
+Name:              mpathe
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        2
+Event number:      0
+Major, minor:      253, 12
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000e3
+
+Name:              mpathbp3
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 7
+Number of targets: 1
+UUID: part3-mpath-3600507680282002010000000000000dd
+
+Name:              mpathbp2
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 6
+Number of targets: 1
+UUID: part2-mpath-3600507680282002010000000000000dd
+
+Name:              mpathd
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        2
+Event number:      1
+Major, minor:      253, 0
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000df
+
+Name:              mpathcp2
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 11
+Number of targets: 1
+UUID: part2-mpath-3600507680282002010000000000000de
+
+Name:              mpathbp1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 5
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000dd
+
+Name:              mpathc
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        3
+Event number:      1
+Major, minor:      253, 4
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000de
+
+Name:              mpathdp2
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 2
+Number of targets: 1
+UUID: part2-mpath-3600507680282002010000000000000df
+
+Name:              mpathcp1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 10
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000de
+
+Name:              mpathep2
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 14
+Number of targets: 1
+UUID: part2-mpath-3600507680282002010000000000000e3
+
+Name:              mpathb
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        5
+Event number:      1
+Major, minor:      253, 3
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000dd
+
+Name:              mpathdp1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 1
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000df
+
+Name:              mpathfp2
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 17
+Number of targets: 1
+UUID: part2-mpath-3600507680282002010000000000000e5
+
+Name:              mpathep1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 13
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000e3
+
+Name:              mpathgp2
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 20
+Number of targets: 1
+UUID: part2-mpath-3600507680282002010000000000000e7
+
+Name:              mpathfp1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 16
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000e5
+
+Name:              mpathhp2
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 23
+Number of targets: 1
+UUID: part2-mpath-3600507680282002010000000000000e9
+
+Name:              mpathjp3
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 35
+Number of targets: 1
+UUID: part3-mpath-3600507680282002010000000000000eb
+
+Name:              mpathgp1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 19
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000e7
+
+Name:              mpathhp1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 22
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000e9
+
+Name:              mpathjp2
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 34
+Number of targets: 1
+UUID: part2-mpath-3600507680282002010000000000000eb
+
+Name:              mpathl
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        3
+Event number:      0
+Major, minor:      253, 28
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000f0
+
+Name:              mpathlp3
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 31
+Number of targets: 1
+UUID: part3-mpath-3600507680282002010000000000000f0
+
+Name:              mpathip1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 32
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000ec
+
+Name:              mpathjp1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 33
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000eb
+
+Name:              mpathk
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        1
+Event number:      0
+Major, minor:      253, 26
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000ef
+
+Name:              mpathlp2
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 30
+Number of targets: 1
+UUID: part2-mpath-3600507680282002010000000000000f0
+
+Name:              mpathkp1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 27
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000ef
+
+Name:              mpathj
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        3
+Event number:      0
+Major, minor:      253, 25
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000eb
+
+Name:              mpathlp1
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 29
+Number of targets: 1
+UUID: part1-mpath-3600507680282002010000000000000f0
+
+Name:              mpathi
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        1
+Event number:      0
+Major, minor:      253, 24
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000ec
+
+Name:              mpathh
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        2
+Event number:      0
+Major, minor:      253, 21
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000e9
+
+Name:              mpathg
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        2
+Event number:      1
+Major, minor:      253, 18
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000e7
+
+Name:              mpathbp5
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 9
+Number of targets: 1
+UUID: part5-mpath-3600507680282002010000000000000dd
+
+Name:              mpathf
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        3
+Event number:      2
+Major, minor:      253, 15
+Number of targets: 1
+UUID: mpath-3600507680282002010000000000000e5
+
+Name:              mpathbp4
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        0
+Event number:      0
+Major, minor:      253, 8
+Number of targets: 1
+UUID: part4-mpath-3600507680282002010000000000000dd
+

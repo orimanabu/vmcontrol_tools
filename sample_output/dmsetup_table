@@ -1,0 +1,36 @@
+mpathe: 0 20971520 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 8:112 1 round-robin 0 1 1 8:128 1 
+mpathbp3: 0 4194304 linear 253:3 22022144
+mpathbp2: 0 20971520 linear 253:3 1050624
+mpathd: 0 20971520 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 8:48 1 round-robin 0 1 1 8:96 1 
+mpathcp2: 0 40916992 linear 253:4 1026048
+mpathbp1: 0 1048576 linear 253:3 2048
+mpathc: 0 41943040 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 8:80 1 round-robin 0 1 1 8:32 1 
+mpathdp2: 0 19945472 linear 253:0 1026048
+mpathcp1: 0 1024000 linear 253:4 2048
+mpathep2: 0 19945472 linear 253:12 1026048
+mpathb: 0 104857600 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 8:16 1 round-robin 0 1 1 8:64 1 
+mpathdp1: 0 1024000 linear 253:0 2048
+mpathfp2: 0 19945472 linear 253:15 1026048
+mpathep1: 0 1024000 linear 253:12 2048
+mpathgp2: 0 19945472 linear 253:18 1026048
+mpathfp1: 0 1024000 linear 253:15 2048
+mpathhp2: 0 19945472 linear 253:21 1026048
+mpathjp3: 0 2062336 linear 253:25 18909184
+mpathgp1: 0 1024000 linear 253:18 2048
+mpathhp1: 0 1024000 linear 253:21 2048
+mpathjp2: 0 17858560 linear 253:25 1050624
+mpathl: 0 20971520 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 65:96 1 round-robin 0 1 1 65:112 1 
+mpathlp3: 0 2062336 linear 253:28 18909184
+mpathip1: 0 2097152 linear 253:24 2048
+mpathjp1: 0 1048576 linear 253:25 2048
+mpathk: 0 10485760 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 65:64 1 round-robin 0 1 1 65:80 1 
+mpathlp2: 0 17858560 linear 253:28 1050624
+mpathkp1: 0 2097152 linear 253:26 2048
+mpathj: 0 20971520 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 65:0 1 round-robin 0 1 1 65:32 1 
+mpathlp1: 0 1048576 linear 253:28 2048
+mpathi: 0 10485760 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 65:16 1 round-robin 0 1 1 8:240 1 
+mpathh: 0 20971520 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 8:208 1 round-robin 0 1 1 8:224 1 
+mpathg: 0 20971520 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 8:176 1 round-robin 0 1 1 8:192 1 
+mpathbp5: 0 2097152 linear 253:3 26220544
+mpathf: 0 20971520 multipath 1 queue_if_no_path 0 2 1 round-robin 0 1 1 8:144 1 round-robin 0 1 1 8:160 1 
+mpathbp4: 0 2 linear 253:3 26216448
