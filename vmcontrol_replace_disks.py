@@ -97,10 +97,9 @@ def update_disks(disks):
             disk['mpath'] = mpath
 
 if __name__ == '__main__':
-    usage = "Usage: %s [--sed | --dumpxml] %s" % (sys.argv[0], "vm")
+    usage = "Usage: %s [--redefine | --dumpxml] %s" % (sys.argv[0], "vm")
 
     parser = OptionParser(usage)
-    parser.add_option("-s", "--sed", action="store_true", dest="sed_flag")
     parser.add_option("-d", "--dumpxml", action="store_true", dest="dumpxml_flag")
     parser.add_option("-r", "--redefine", action="store_true", dest="redefine_flag")
     parser.add_option("-w", "--wwn", action="store_true", dest="wwn_flag")
