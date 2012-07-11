@@ -9,56 +9,34 @@ import libvirt
 from optparse import OptionParser, OptionValueError
 from lxml import etree
 
-#def get_vm_name(path, args):
-#    if path:
-#        file = open(path, 'r')
-#        xml = etree.parse(file, parser=etree.XMLParser())
-#        return xml.xpath("/domain/name")[0].text
-#    else:
-#        return args[0]
 def get_vm_name(arg):
     try:
         file = open(arg, 'r')
-        print "** file"
+#        print "** file"
         xml = etree.parse(file, parser=etree.XMLParser())
         return xml.xpath("/domain/name")[0].text
     except IOError:
-        print "** vm"
-        return args[0]
+#        print "** vm"
+        return arg
 
-#def get_dumpxml(path, vm):
-#    if path:
-#        file = open(path, 'r')
-#    else:
-#        virsh_dumpxml = "virsh dumpxml %s" % vm
-#        file = os.popen(virsh_dumpxml)
-#    return file
 def get_dumpxml(arg):
     buf = None
     try:
         file = open(arg, 'r')
-        print "* file"
+#        print "* file"
         buf = file.read()
     except IOError:
-        print "* vm"
-#        virsh_dumpxml = "virsh dumpxml %s" % vm
-#        file = os.popen(virsh_dumpxml)
+#        print "* vm"
         conn = libvirt.openReadOnly(None)
         if conn is None:
             print "libvirt.openReadOnly failed."
             sys.exit(1)
-#        for name in conn.listDefinedDomains():
-#            dom = conn.lookupByName(name)
         dom = conn.lookupByName(arg)
         buf = dom.XMLDesc(0)
     return buf
 
-#def get_vm_disks(path, vm):
-#    file = get_dumpxml(path, vm)
 def get_vm_disks(vm):
     xmlstr = get_dumpxml(vm)
-#    xml = etree.parse(file, parser=etree.XMLParser())
-#    xml = etree.fromstring(file).getroot()
     xml = etree.XML(xmlstr)
     disks_elem = xml.xpath("/domain/devices/disk[@device='disk']")
     disks = []
@@ -137,7 +115,6 @@ if __name__ == '__main__':
     parser.add_option("-r", "--redefine", action="store_true", dest="redefine_flag")
     parser.add_option("-w", "--wwn", action="store_true", dest="wwn_flag")
     parser.add_option("-m", "--mpath", action="store_true", dest="mpath_flag")
-#    parser.add_option("-i", "--inputxml", action="store", dest="inputxml")
     (options, args) = parser.parse_args()
 
     if not options.mpath_flag and not options.wwn_flag:
@@ -146,9 +123,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     arg = args[0]
-#    vm = get_vm_name(options.inputxml, args)
     vm = get_vm_name(arg)
-#    disks = get_vm_disks(options.inputxml, vm)
     disks = get_vm_disks(arg)
     dev2mpath = build_dev2mpath()
     (wwn2majmin, majmin2wwn) = build_wwn2majmin()
@@ -169,7 +144,6 @@ if __name__ == '__main__':
 #        sys.exit(0)
 
     if options.redefine_flag:
-#        infile = get_dumpxml(options.inputxml, vm)
         lines = get_dumpxml(arg).split('\n')
         (fd, fname) = tempfile.mkstemp(prefix="vmcontrol_replace_disks_", suffix=".xml")
         print "*** create: %s" % fname
@@ -182,14 +156,13 @@ if __name__ == '__main__':
                 elif options.wwn_flag:
                     r = re.compile("dm-name-%s" % disk['mpath'])
                     line = r.sub(disk['wwn'], line)
-#            file.write(line)
             print >> file, line
         file.close()
         virsh_define = "virsh define %s" % fname
         print "*** command:", virsh_define
-#        os.system(virsh_define)
+        os.system(virsh_define)
         print "*** remove: %s" % fname
-#        os.remove(fname)
+        os.remove(fname)
 #        sys.exit(0)
 
     if not options.dumpxml_flag and not options.redefine_flag:
