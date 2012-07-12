@@ -64,31 +64,27 @@ def build_dev2mpath0():
                     dev2mpath[majmin] = mdev
     return dev2mpath
 
-def build_dev2mpath():
-    dev2mpath = {}
+def build_majmin2mpath():
+    majmin2mpath = {}
     for dev in block.DeviceMaps():
         for dep in dev.deps:
-            dev2mpath[(dep.major, dep.minor)] = dev.name
-    return dev2mpath
+            majmin2mpath[(dep.major, dep.minor)] = dev.name
+    return majmin2mpath
 
-def build_wwn2majmin():
-    wwn2majmin = {}
+def build_majmin2wwn():
     majmin2wwn = {}
     wwn_list = "ls /dev/disk/by-id/wwn-*"
     for wwn_path in os.popen(wwn_list):
         wwn_path = wwn_path.strip()
-        wwn_file = os.path.basename(wwn_path)
-        physdev = os.path.realpath(wwn_path)
-        dev = os.stat(physdev).st_rdev
-        wwn2majmin[wwn_file] = (os.major(dev), os.minor(dev))
-        majmin2wwn[(os.major(dev), os.minor(dev))] = wwn_file
-    return (wwn2majmin, majmin2wwn)
+        dev = os.stat(os.path.realpath(wwn_path)).st_rdev
+        majmin2wwn[(os.major(dev), os.minor(dev))] = os.path.basename(wwn_path)
+    return majmin2wwn
 
 def update_disks(disks):
     for disk in disks:
         if options.mpath_flag:
             disk['wwn'] = disk['source']
-            disk['mpath'] = dev2mpath[disk['majmin']]
+            disk['mpath'] = majmin2mpath[disk['majmin']]
         if options.wwn_flag:
             mpath = None
             wwn = None
@@ -101,11 +97,11 @@ def update_disks(disks):
                 physdev = os.path.realpath("/dev/disk/by-id/scsi-%s" % uuid)
                 dev = os.stat(physdev).st_rdev
                 majmin = (os.major(dev), os.minor(dev))
-                mpath = dev2mpath[majmin]
+                mpath = majmin2mpath[majmin]
             else:
                 regexp = re.compile('^dm-name-')
                 mpath = regexp.sub('', disk['source'])
-            for d,m in dev2mpath.items():
+            for d,m in majmin2mpath.items():
                 if mpath == m:
                     if majmin2wwn.has_key(d):
                         wwn = majmin2wwn[d]
@@ -139,6 +135,9 @@ def replace_disk(line, disks, options):
                 line = r.sub(disk['wwn'], line)
     return line
 
+majmin2mpath = build_majmin2mpath()
+majmin2wwn = build_majmin2wwn()
+
 if __name__ == '__main__':
     usage = "Usage: %s [--wwn | --mpath] [--redefine | --dumpxml] %s" % (sys.argv[0], "vm")
 
@@ -157,8 +156,6 @@ if __name__ == '__main__':
     arg = args[0]
     disks = get_vm_disks(arg)
     check_disks(disks, options)
-    dev2mpath = build_dev2mpath()
-    (wwn2majmin, majmin2wwn) = build_wwn2majmin()
     update_disks(disks)
 
     if options.dumpxml_flag:
