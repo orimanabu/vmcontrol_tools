@@ -9,24 +9,12 @@ import libvirt
 from optparse import OptionParser, OptionValueError
 from lxml import etree
 
-def get_vm_name(arg):
-    try:
-        file = open(arg, 'r')
-#        print "** file"
-        xml = etree.parse(file, parser=etree.XMLParser())
-        return xml.xpath("/domain/name")[0].text
-    except IOError:
-#        print "** vm"
-        return arg
-
 def get_dumpxml(arg):
     buf = None
     try:
         file = open(arg, 'r')
-#        print "* file"
         buf = file.read()
     except IOError:
-#        print "* vm"
         conn = libvirt.openReadOnly(None)
         if conn is None:
             print "libvirt.openReadOnly failed."
@@ -159,7 +147,6 @@ if __name__ == '__main__':
         sys.exit(1)
 
     arg = args[0]
-#    vm = get_vm_name(arg)
     disks = get_vm_disks(arg)
     check_disks(disks, options)
     dev2mpath = build_dev2mpath()
@@ -171,7 +158,6 @@ if __name__ == '__main__':
         lines = xmlstr.split('\n')
         for line in lines:
             print replace_disk(line, disks, options)
-#        sys.exit(0)
 
     if options.redefine_flag:
         lines = get_dumpxml(arg).split('\n')
@@ -186,7 +172,6 @@ if __name__ == '__main__':
         os.system(virsh_define)
         print "*** remove: %s" % fname
         os.remove(fname)
-#        sys.exit(0)
 
     if not options.dumpxml_flag and not options.redefine_flag:
         for disk in disks:
