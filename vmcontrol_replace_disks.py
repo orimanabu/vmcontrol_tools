@@ -37,33 +37,6 @@ def get_vm_disks(vm):
         disks.append(obj)
     return disks
 
-def build_dev2mpath0():
-    dev2mpath = {}
-    dmsetup_list = "dmsetup ls | sort"
-    for dmlist in os.popen(dmsetup_list):
-        # sample output: "mpathd  (253, 0)"
-        regexp = re.compile('\s.*$')
-        mdev = regexp.sub('', dmlist)
-
-        # get block devs depends on mdev
-        dmsetup_deps = "dmsetup deps %s" % mdev
-        for dmdeps in os.popen(dmsetup_deps):
-            # sample output: "2 dependencies  : (8, 96) (8, 48)"
-            regexp = re.compile('^.*: ')
-            deps = regexp.sub('', dmdeps.strip());
-
-            regexp = re.compile('^\(.*?\) ?')
-            while deps:
-                m = regexp.match(deps)
-                if m:
-                    dep = m.group(0)
-                    deps = regexp.sub('', deps)
-                    regexp = re.compile('^\((\d+), (\d+)\)')
-                    m = regexp.match(dep)
-                    majmin = (int(m.group(1)), int(m.group(2)))
-                    dev2mpath[majmin] = mdev
-    return dev2mpath
-
 def build_majmin2mpath():
     majmin2mpath = {}
     for dev in block.DeviceMaps():
