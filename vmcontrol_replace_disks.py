@@ -128,6 +128,20 @@ def check_disks(disks, options):
             print "exit. check whether your option (--mpath or --wwn) is correct."
             sys.exit(1)
 
+def replace_disk(line, disks, options):
+    for disk in disks:
+        if options.mpath_flag:
+            r = re.compile(disk['wwn'])
+            line = r.sub("dm-name-%s" % disk['mpath'], line)
+        elif options.wwn_flag:
+            if disk['uuid']:
+                r = re.compile("dm-uuid-mpath-%s" % disk['uuid'])
+                line = r.sub(disk['wwn'], line)
+            else:
+                r = re.compile("dm-name-%s" % disk['mpath'])
+                line = r.sub(disk['wwn'], line)
+    return line
+
 if __name__ == '__main__':
     usage = "Usage: %s [--redefine | --dumpxml] %s" % (sys.argv[0], "vm")
 
@@ -155,18 +169,7 @@ if __name__ == '__main__':
         xmlstr = get_dumpxml(arg)
         lines = xmlstr.split('\n')
         for line in lines:
-            for disk in disks:
-                if options.mpath_flag:
-                    r = re.compile(disk['wwn'])
-                    line = r.sub("dm-name-%s" % disk['mpath'], line)
-                elif options.wwn_flag:
-                    if disk['uuid']:
-                        r = re.compile("dm-uuid-mpath-%s" % disk['uuid'])
-                        line = r.sub(disk['wwn'], line)
-                    else:
-                        r = re.compile("dm-name-%s" % disk['mpath'])
-                        line = r.sub(disk['wwn'], line)
-            print line
+            print replace_disk(line, disks, options)
 #        sys.exit(0)
 
     if options.redefine_flag:
@@ -175,18 +178,7 @@ if __name__ == '__main__':
         print "*** create: %s" % fname
         file = os.fdopen(fd, "w")
         for line in lines:
-            for disk in disks:
-                if options.mpath_flag:
-                    r = re.compile(disk['wwn'])
-                    line = r.sub("dm-name-%s" % disk['mpath'], line)
-                elif options.wwn_flag:
-                    if disk['uuid']:
-                        r = re.compile("dm-uuid-mpath-%s" % disk['uuid'])
-                        line = r.sub(disk['wwn'], line)
-                    else:
-                        r = re.compile("dm-name-%s" % disk['mpath'])
-                        line = r.sub(disk['wwn'], line)
-            print >> file, line
+            print >> file, replace_disk(line, disks, options)
         file.close()
         virsh_define = "virsh define %s" % fname
         print "*** command:", virsh_define
