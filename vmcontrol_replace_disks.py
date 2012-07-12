@@ -6,6 +6,7 @@ import sys
 import re
 import tempfile
 import libvirt
+import block
 from optparse import OptionParser, OptionValueError
 from lxml import etree
 
@@ -36,7 +37,7 @@ def get_vm_disks(vm):
         disks.append(obj)
     return disks
 
-def build_dev2mpath():
+def build_dev2mpath0():
     dev2mpath = {}
     dmsetup_list = "dmsetup ls | sort"
     for dmlist in os.popen(dmsetup_list):
@@ -61,6 +62,13 @@ def build_dev2mpath():
                     m = regexp.match(dep)
                     majmin = (int(m.group(1)), int(m.group(2)))
                     dev2mpath[majmin] = mdev
+    return dev2mpath
+
+def build_dev2mpath():
+    dev2mpath = {}
+    for dev in block.DeviceMaps():
+        for dep in dev.deps:
+            dev2mpath[(dep.major, dep.minor)] = dev.name
     return dev2mpath
 
 def build_wwn2majmin():
