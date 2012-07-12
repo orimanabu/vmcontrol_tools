@@ -180,8 +180,12 @@ if __name__ == '__main__':
                     r = re.compile(disk['wwn'])
                     line = r.sub("dm-name-%s" % disk['mpath'], line)
                 elif options.wwn_flag:
-                    r = re.compile("dm-name-%s" % disk['mpath'])
-                    line = r.sub(disk['wwn'], line)
+                    if disk['uuid']:
+                        r = re.compile("dm-uuid-mpath-%s" % disk['uuid'])
+                        line = r.sub(disk['wwn'], line)
+                    else:
+                        r = re.compile("dm-name-%s" % disk['mpath'])
+                        line = r.sub(disk['wwn'], line)
             print >> file, line
         file.close()
         virsh_define = "virsh define %s" % fname
