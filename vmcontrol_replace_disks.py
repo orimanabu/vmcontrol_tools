@@ -96,6 +96,7 @@ def update_disks(disks):
         if options.wwn_flag:
             mpath = None
             wwn = None
+            uuid = None
             devs = []
             regexp = re.compile('^dm-uuid-mpath-')
             match = regexp.match(disk['source'])
@@ -160,10 +161,10 @@ if __name__ == '__main__':
     arg = args[0]
     vm = get_vm_name(arg)
     disks = get_vm_disks(arg)
+    check_disks(disks, options)
     dev2mpath = build_dev2mpath()
     (wwn2majmin, majmin2wwn) = build_wwn2majmin()
     update_disks(disks)
-    check_disks(disks, options)
 
     if options.dumpxml_flag:
         xmlstr = get_dumpxml(arg)
