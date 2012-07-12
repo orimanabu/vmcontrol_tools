@@ -53,12 +53,12 @@ def build_majmin2wwn():
         majmin2wwn[(os.major(dev), os.minor(dev))] = os.path.basename(wwn_path)
     return majmin2wwn
 
-def update_disks(disks):
+def update_disks(disks, mpath_flag, wwn_flag):
     for disk in disks:
-        if options.mpath_flag:
+        if mpath_flag:
             disk['wwn'] = disk['source']
             disk['mpath'] = majmin2mpath[disk['majmin']]
-        if options.wwn_flag:
+        if wwn_flag:
             mpath = None
             wwn = None
             uuid = None
@@ -87,10 +87,10 @@ def update_disks(disks):
             disk['uuid'] = uuid
             disk['mpath'] = mpath
 
-def check_disks(disks, options):
-    if options.mpath_flag:
+def check_disks(disks, mpath_flag, wwn_flag):
+    if mpath_flag:
         regexp = re.compile('.*mpath.*')
-    elif options.wwn_flag:
+    elif wwn_flag:
         regexp = re.compile('.*wwn-.*')
     for disk in disks:
         m = regexp.match(disk['source'])
@@ -98,12 +98,12 @@ def check_disks(disks, options):
             print "exit. check whether your option (--mpath or --wwn) is correct."
             sys.exit(1)
 
-def replace_disk(line, disks, options):
+def replace_disk(line, disks, mpath_flag, wwn_flag):
     for disk in disks:
-        if options.mpath_flag:
+        if mpath_flag:
             r = re.compile(disk['wwn'])
             line = r.sub("dm-name-%s" % disk['mpath'], line)
-        elif options.wwn_flag:
+        elif wwn_flag:
             if disk['uuid']:
                 r = re.compile("dm-uuid-mpath-%s" % disk['uuid'])
                 line = r.sub(disk['wwn'], line)
@@ -116,13 +116,14 @@ majmin2mpath = build_majmin2mpath()
 majmin2wwn = build_majmin2wwn()
 
 if __name__ == '__main__':
-    usage = "Usage: %s [--wwn | --mpath] [--redefine | --dumpxml] %s" % (sys.argv[0], "vm")
+    usage = "Usage: %s [--wwn | --mpath] [--redefine [--test] | --dumpxml] %s" % (sys.argv[0], "vm")
 
     parser = OptionParser(usage)
     parser.add_option("-d", "--dumpxml", action="store_true", dest="dumpxml_flag")
     parser.add_option("-r", "--redefine", action="store_true", dest="redefine_flag")
     parser.add_option("-w", "--wwn", action="store_true", dest="wwn_flag")
     parser.add_option("-m", "--mpath", action="store_true", dest="mpath_flag")
+    parser.add_option("-t", "--test", action="store_true", dest="test_flag")
     (options, args) = parser.parse_args()
 
     if not options.mpath_flag and not options.wwn_flag:
@@ -132,14 +133,14 @@ if __name__ == '__main__':
 
     arg = args[0]
     disks = get_vm_disks(arg)
-    check_disks(disks, options)
-    update_disks(disks)
+    check_disks(disks, options.mpath_flag, options.wwn_flag)
+    update_disks(disks, options.mpath_flag, options.wwn_flag)
 
     if options.dumpxml_flag:
         xmlstr = get_dumpxml(arg)
         lines = xmlstr.split('\n')
         for line in lines:
-            print replace_disk(line, disks, options)
+            print replace_disk(line, disks, options.mpath_flag, options.wwn_flag)
 
     if options.redefine_flag:
         lines = get_dumpxml(arg).split('\n')
@@ -147,13 +148,13 @@ if __name__ == '__main__':
         print "*** create: %s" % fname
         file = os.fdopen(fd, "w")
         for line in lines:
-            print >> file, replace_disk(line, disks, options)
+            print >> file, replace_disk(line, disks, options.mpath_flag, options.wwn_flag)
         file.close()
         virsh_define = "virsh define %s" % fname
         print "*** command:", virsh_define
-        os.system(virsh_define)
+        if not options.test_flag: os.system(virsh_define)
         print "*** remove: %s" % fname
-        os.remove(fname)
+        if not options.test_flag: os.remove(fname)
 
     if not options.dumpxml_flag and not options.redefine_flag:
         for disk in disks:
