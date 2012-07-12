@@ -94,17 +94,27 @@ def update_disks(disks):
             disk['wwn'] = disk['source']
             disk['mpath'] = dev2mpath[disk['majmin']]
         if options.wwn_flag:
-            physdev = os.path.realpath("/dev/block/%s:%s" % disk['majmin'])
-            regexp = re.compile('^dm-name-')
-            mpath = regexp.sub('', disk['source'])
-            devs = []
+            mpath = None
             wwn = None
+            devs = []
+            regexp = re.compile('^dm-uuid-mpath-')
+            match = regexp.match(disk['source'])
+            if match:
+                uuid = regexp.sub('', disk['source'])
+                physdev = os.path.realpath("/dev/disk/by-id/scsi-%s" % uuid)
+                dev = os.stat(physdev).st_rdev
+                majmin = (os.major(dev), os.minor(dev))
+                mpath = dev2mpath[majmin]
+            else:
+                regexp = re.compile('^dm-name-')
+                mpath = regexp.sub('', disk['source'])
             for d,m in dev2mpath.items():
                 if mpath == m:
                     if majmin2wwn.has_key(d):
                         wwn = majmin2wwn[d]
                         break
             disk['wwn'] = wwn
+            disk['uuid'] = uuid
             disk['mpath'] = mpath
 
 def check_disks(disks, options):
@@ -150,8 +160,12 @@ if __name__ == '__main__':
                     r = re.compile(disk['wwn'])
                     line = r.sub("dm-name-%s" % disk['mpath'], line)
                 elif options.wwn_flag:
-                    r = re.compile("dm-name-%s" % disk['mpath'])
-                    line = r.sub(disk['wwn'], line)
+                    if disk['uuid']:
+                        r = re.compile("dm-uuid-mpath-%s" % disk['uuid'])
+                        line = r.sub(disk['wwn'], line)
+                    else:
+                        r = re.compile("dm-name-%s" % disk['mpath'])
+                        line = r.sub(disk['wwn'], line)
             print line
 #        sys.exit(0)
 
