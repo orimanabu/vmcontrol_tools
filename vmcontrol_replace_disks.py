@@ -66,12 +66,16 @@ def update_disks(disks):
             regexp = re.compile('^dm-uuid-mpath-')
             match = regexp.match(disk['source'])
             if match:
+                # UUID pattern
+                # e.g. "dm-uuid-mpath-3600507680282002010000000000000df"
                 uuid = regexp.sub('', disk['source'])
                 physdev = os.path.realpath("/dev/disk/by-id/scsi-%s" % uuid)
                 dev = os.stat(physdev).st_rdev
                 majmin = (os.major(dev), os.minor(dev))
                 mpath = majmin2mpath[majmin]
             else:
+                # Name pattern
+                # e.g. "dm-name-mpathc"
                 regexp = re.compile('^dm-name-')
                 mpath = regexp.sub('', disk['source'])
             for d,m in majmin2mpath.items():
