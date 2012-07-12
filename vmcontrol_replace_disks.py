@@ -144,7 +144,7 @@ def replace_disk(line, disks, options):
     return line
 
 if __name__ == '__main__':
-    usage = "Usage: %s [--redefine | --dumpxml] %s" % (sys.argv[0], "vm")
+    usage = "Usage: %s [--wwn | --mpath] [--redefine | --dumpxml] %s" % (sys.argv[0], "vm")
 
     parser = OptionParser(usage)
     parser.add_option("-d", "--dumpxml", action="store_true", dest="dumpxml_flag")
@@ -159,7 +159,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     arg = args[0]
-    vm = get_vm_name(arg)
+#    vm = get_vm_name(arg)
     disks = get_vm_disks(arg)
     check_disks(disks, options)
     dev2mpath = build_dev2mpath()
