@@ -58,6 +58,7 @@ def update_disks(disks, mpath_flag, wwn_flag):
         if mpath_flag:
             disk['wwn'] = disk['source']
             disk['mpath'] = majmin2mpath[disk['majmin']]
+            disk['uuid'] = os.popen("/lib/udev/scsi_id --whitelist --device %s" % disk['source_fullpath']).read().strip()
         if wwn_flag:
             mpath = None
             wwn = None
@@ -102,7 +103,8 @@ def replace_disk(line, disks, mpath_flag, wwn_flag):
     for disk in disks:
         if mpath_flag:
             r = re.compile(disk['wwn'])
-            line = r.sub("dm-name-%s" % disk['mpath'], line)
+#            line = r.sub("dm-name-%s" % disk['mpath'], line)
+            line = r.sub("dm-uuid-mpath-%s" % disk['uuid'], line)
         elif wwn_flag:
             if disk['uuid']:
                 r = re.compile("dm-uuid-mpath-%s" % disk['uuid'])
