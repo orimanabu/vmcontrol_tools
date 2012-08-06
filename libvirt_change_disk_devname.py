@@ -6,7 +6,7 @@ import sys
 import re
 import tempfile
 import libvirt
-import block
+#import block
 from optparse import OptionParser, OptionValueError
 from lxml import etree
 
@@ -37,12 +37,42 @@ def get_vm_disks(vm):
         disks.append(obj)
     return disks
 
+#def build_majmin2mpath_pyblock():
+#    majmin2mpath = {}
+#    for dev in block.DeviceMaps():
+#        for dep in dev.deps:
+#            majmin2mpath[(dep.major, dep.minor)] = dev.name
+#    return majmin2mpath
+
+def build_majmin2mpath_dmsetup():
+    dev2mpath = {}
+    for dmlist in os.popen("dmsetup ls | sort"):
+        # sample output: "mpathd  (253, 0)"
+        regexp = re.compile('\s.*$')
+        mdev = regexp.sub('', dmlist)
+
+        # get block devs depends on mdev
+        dmsetup_deps = "dmsetup deps %s" % mdev
+        for dmdeps in os.popen(dmsetup_deps):
+            # sample output: "2 dependencies  : (8, 96) (8, 48)"
+            regexp = re.compile('^.*: ')
+            deps = regexp.sub('', dmdeps.strip());
+
+            while deps:
+                regexp = re.compile('^\(.*?\) ?')
+                m = regexp.match(deps)
+                if m:
+                    dep = m.group(0)
+                    deps = regexp.sub('', deps)
+                    regexp = re.compile('^\((\d+), (\d+)\)')
+                    m = regexp.match(dep)
+                    majmin = (int(m.group(1)), int(m.group(2)))
+                    dev2mpath[majmin] = mdev
+    return dev2mpath
+
 def build_majmin2mpath():
-    majmin2mpath = {}
-    for dev in block.DeviceMaps():
-        for dep in dev.deps:
-            majmin2mpath[(dep.major, dep.minor)] = dev.name
-    return majmin2mpath
+#    return build_majmin2mpath_pyblock()
+    return build_majmin2mpath_dmsetup()
 
 def build_majmin2wwn():
     majmin2wwn = {}
