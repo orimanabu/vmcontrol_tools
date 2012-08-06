@@ -2,8 +2,9 @@ Helper scripts for IBM Systems Director VMControl.
 
 * libvirt_change_disk_devname.py
 VMControl only supports device name such as '/dev/disk/by-id/wwn-XXX' as VM's target LUN.
-The dev name is a symlink to /dev/sdX , therefor it is treated as "single path" device.
+Device name like 'wwn-XXX' is a symlink to /dev/sdX , therefor it is treated as "single path" device.
 This script transforms the dev name to "multipath" device name like '/dev/disk/by-id/dm-uuid-YYY'.
+Run this scripts after deploying VMs.
 
 Usage:
   ./libvirt_change_disk_devname.py [--wwn | --mpath] [--redefine | --dumpxml] VMNAME
